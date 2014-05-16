@@ -77,10 +77,12 @@ public class BatteryWatcher extends Service {
 		if (sPreferences == null)
 			sPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		
+		
 	}
 
 	@Override
 	public void onStart(Intent intent, int startId) {
+		super.onStart(intent, startId);
 		// showTxt("on start");
 	}
 	

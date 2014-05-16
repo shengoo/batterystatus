@@ -5,6 +5,7 @@ package com.sheng00.BatteryStatus;
 
 import com.sheng00.BatteryStatus.R;
 
+import android.R.integer;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -64,11 +65,8 @@ public class BatteryWatcher extends Service {
 
 	@Override
 	public void onCreate() {
+		super.onCreate();
 		// showTxt("on create");
-	}
-
-	@Override
-	public void onStart(Intent intent, int startId) {
 		mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
 		IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -78,15 +76,38 @@ public class BatteryWatcher extends Service {
 			prefs = new PrefsSetting(this);
 		if (sPreferences == null)
 			sPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		// showTxt("on start");
+		
 	}
 
 	@Override
+	public void onStart(Intent intent, int startId) {
+		// showTxt("on start");
+	}
+	
+	@Override
+	public int onStartCommand(final Intent intent, int flags, int startId) {
+		return START_STICKY;
+	}
+	
+// need  API level 14	
+//	@Override
+//	public void onTaskRemoved(final Intent rootIntent) {
+//		super.onTaskRemoved(rootIntent);
+//		if (Logger.LOG)
+//			Logger.log("sensor service task removed");
+//		// Restart service in 500 ms
+//		((AlarmManager) getSystemService(Context.ALARM_SERVICE)).set(AlarmManager.RTC, System.currentTimeMillis() + 500,
+//				PendingIntent.getService(this, 3, new Intent(this, SensorListener.class), 0));
+//	}
+
+	@Override
 	public void onDestroy() {
+		super.onDestroy();
 		unregisterReceiver(batteryReceiver);
 		// showTxt("on destroy");
 		mNM.cancel(NOTIFY_ID);
 		lastLevel = 0;
+		stopForeground(true);
 	}
 
 	private void showTxt(String string) {
@@ -156,6 +177,8 @@ public class BatteryWatcher extends Service {
 		if (l == sPreferences
 				.getInt(getString(R.string.low_alert_level_key), 0))
 			showLowBatteryAlert();
+
+		startForeground(NOTIFY_ID, notification);
 		// Toast.makeText(this, "showNotification", Toast.LENGTH_SHORT).show();
 	}
 

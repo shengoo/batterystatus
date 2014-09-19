@@ -12,7 +12,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.widget.Toast;
-
+ 
 public class BatteryStatus extends PreferenceActivity {
 	/** Called when the activity is first created. */
 
